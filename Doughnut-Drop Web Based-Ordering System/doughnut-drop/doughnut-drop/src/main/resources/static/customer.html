@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doughnut Drop — My Orders &amp; Tracker</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<header class="topbar">
+    <a class="brand-link" href="/index.html">🍩 DOUGHNUT DROP</a>
+    <nav class="nav-links">
+        <a href="/index.html">Home</a>
+        <a href="/menu.html">Menu</a>
+        <a class="active" href="/customer.html">My Orders</a>
+        <a href="/login.html">Staff / Admin Login</a>
+    </nav>
+</header>
+
+<main class="container">
+    <h2>Live Order Tracker</h2>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <input id="trackInput" type="text" placeholder="Order number (e.g., DD-2026-0001)" style="padding:9px 12px;border-radius:10px;border:1px solid var(--border);" />
+        <button id="trackBtn" class="btn-primary" type="button">Track</button>
+    </div>
+    <div id="trackerBox" class="card" style="margin-bottom:24px;">Enter an order number to inspect live progress.</div>
+
+    <h3>Recent Orders</h3>
+    <div id="ordersList"></div>
+</main>
+
+<script src="/js/app.js"></script>
+<script>
+    const STAGES = ["PENDING", "PREPARING", "READY_FOR_PICKUP", "OUT_FOR_DELIVERY", "DELIVERED"];
+
+    async function loadTracker(orderNumber) {
+        if (!orderNumber) return;
+        const res = await fetch("/api/orders/" + encodeURIComponent(orderNumber));
+        const box = document.getElementById("trackerBox");
+        if (!res.ok) {
+            box.innerHTML = `<p style="color:var(--danger);">Order ${orderNumber} not found.</p>`;
+            return;
+        }
+        const o = await res.json();
+        const idx = STAGES.indexOf(o.status);
+        const chips = STAGES.map((s, i) =>
+            `<span class="step-chip ${i <= idx && o.status !== "CANCELLED" ? "done" : ""}">${s.replaceAll("_", " ")}</span>`
+        ).join("");
+        box.innerHTML = `
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <strong>Order ${o.orderNumber}</strong>
+          <span>Status: <strong>${o.status}</strong> • Total: <strong>${DD_API.formatPhp(o.totalAmount)}</strong></span>
+        </div>
+        <div class="stepper">${chips}</div>
+        <div style="font-size:13px;color:var(--muted);">
+          Fulfillment: ${o.fulfillmentType} • Destination: ${o.deliveryAddress || "-"}
+          ${o.riderName ? ` • Rider: <strong>${o.riderName}</strong> (${o.riderPhone || ""})` : ""}
+        </div>
+      `;
+    }
+
+    async function loadRecentOrders() {
+        const res = await fetch("/api/orders");
+        const list = await res.json();
+        document.getElementById("ordersList").innerHTML = list.map(o => `
+        <div class="card" style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div>
+              <strong>${o.orderNumber}</strong> — ${o.status} (${DD_API.formatPhp(o.totalAmount)})
+              <div style="font-size:13px;color:var(--muted);">
+                ${o.items.map(i => `${i.quantity}x ${i.name}`).join(", ")}
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-ghost" type="button" onclick="loadTracker('${o.orderNumber}')">Track</button>
+              <button class="btn-primary" type="button" onclick='reorder(${JSON.stringify(o.items)})'>Reorder</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function reorder(items) {
+        items.forEach(i => {
+            DD_API.addToCart({ id: i.doughnutItemId, name: i.name, price: i.unitPrice, stockQuantity: 99, imageUrl: "" }, i.quantity);
+        });
+        window.location.href = "/menu.html";
+    }
+
+    document.getElementById("trackBtn").addEventListener("click", () => {
+        loadTracker(document.getElementById("trackInput").value.trim());
+    });
+
+    const urlOrder = new URLSearchParams(window.location.search).get("order") || localStorage.getItem("dd_last_order");
+    if (urlOrder) {
+        document.getElementById("trackInput").value = urlOrder;
+        loadTracker(urlOrder);
+    }
+    loadRecentOrders();
+</script>
+</body>
+</html>
