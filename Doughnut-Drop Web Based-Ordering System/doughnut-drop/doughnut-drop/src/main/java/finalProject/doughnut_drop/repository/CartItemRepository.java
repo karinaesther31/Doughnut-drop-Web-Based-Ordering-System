@@ -13,5 +13,3 @@ public interface CartItemRepository
     Optional<CartItem>findByCustomerIdAndProductId(Long customerId, Long productId);
 }
 
-public class CartItemRepository {
-}

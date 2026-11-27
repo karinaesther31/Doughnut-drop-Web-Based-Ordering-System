@@ -79,5 +79,3 @@ public class Product {
         this.active = active;
     }
 }
-public class Product {
-}
