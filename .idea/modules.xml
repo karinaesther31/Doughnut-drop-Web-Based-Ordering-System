@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/SD ni jamaica.iml" filepath="$PROJECT_DIR$/.idea/SD ni jamaica.iml" />
-=======
       <module fileurl="file://$PROJECT_DIR$/.idea/Doughnut-drop-Web-Based-Ordering-System.iml" filepath="$PROJECT_DIR$/.idea/Doughnut-drop-Web-Based-Ordering-System.iml" />
->>>>>>> 309ed7b (Save local changes before pull)
     </modules>
   </component>
 </project>
