@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 
 public record DoughnutResponseDTO(
         Long id,
-        String code,
         String flavorName,
-        String glazeType,
         BigDecimal price,
         Integer stockQuantity,
         String availabilityStatus

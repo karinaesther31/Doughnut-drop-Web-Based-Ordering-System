@@ -11,39 +11,25 @@ public class DoughnutItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String code;
-
     @Column(nullable = false)
     private String flavorName;
 
-    @Column(nullable = false)
-    private String glazeType;
-
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(nullable = false)
     private Integer stockQuantity;
-
     public DoughnutItem() {}
-
-    public DoughnutItem(String code, String flavorName, String glazeType,
-                        BigDecimal price, Integer stockQuantity) {
-        this.code = code;
+    public DoughnutItem(String flavorName, BigDecimal price, Integer stockQuantity) {
         this.flavorName = flavorName;
-        this.glazeType = glazeType;
         this.price = price;
         this.stockQuantity = stockQuantity;
     }
 
+
     public Long getId() { return id; }
-    public String getCode() { return code; }
-    public void setCode(String code) { this.code = code; }
     public String getFlavorName() { return flavorName; }
     public void setFlavorName(String flavorName) { this.flavorName = flavorName; }
-    public String getGlazeType() { return glazeType; }
-    public void setGlazeType(String glazeType) { this.glazeType = glazeType; }
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
     public Integer getStockQuantity() { return stockQuantity; }

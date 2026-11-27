@@ -3,7 +3,6 @@ package finalProject.doughnut_drop.dto;
 
 public record orderItemsResponseDTO (
     Long DoughtnutId,
-    String code,
     String flavorName,
     Integer quantity,
     BigDecimal unitPrice,

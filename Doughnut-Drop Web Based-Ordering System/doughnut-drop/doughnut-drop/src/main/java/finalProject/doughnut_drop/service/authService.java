@@ -5,68 +5,74 @@ import finalProject.doughnut_drop.dto.userProfileResponseDTO;
 import finalProject.doughnut_drop.entity.userAccount;
 import finalProject.doughnut_drop.repository.userAccountRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class authService implements UserDetailsService {
+public class authService {
 
-    private final userAccountRepository userAccountRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final userAccountRepository repository;
 
-    public authService(userAccountRepository userAccountRepository, PasswordEncoder passwordEncoder) {
-        this.userAccountRepository = userAccountRepository;
-        this.passwordEncoder = passwordEncoder;
+    public authService(userAccountRepository repository) {
+        this.repository = repository;
     }
 
     public userProfileResponseDTO registerCustomer(registerRequestDTO req) {
-        String cleanUsername = req.username().trim();
-        String cleanEmail = req.email().trim().toLowerCase();
+        String normalizedUsername = req.username().trim();
+        String normalizedEmail = req.email().trim().toLowerCase();
 
-        if (userAccountRepository.existByUsername(cleanUsername)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken");
+        if (repository.existsByUsernameIgnoreCase(normalizedUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists: " + normalizedUsername);
         }
-        if (userAccountRepository.existByEmail(cleanEmail)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already registered");
+
+        if (repository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists: " + normalizedEmail);
         }
 
         userAccount account = new userAccount(
-                req.fullname().trim(),
-                cleanUsername,
-                cleanEmail,
+                req.fullName().trim(),
+                normalizedUsername,
+                normalizedEmail,
                 req.mobileNumber().trim(),
                 req.defaultDeliveryAddress().trim(),
-                passwordEncoder.encode("CUSTOMER_NO_PASSWORD"),
+                normalizeFulfillment(req.defaultFulfillmentType()),
+                normalizePayment(req.defaultPaymentMethod()),
                 "ROLE_USER"
         );
 
-        userAccount saved = userAccountRepository.save(account);
-        return toProfileDTO(saved);
+        userAccount savedAccount = repository.save(account);
+        return toProfileDTO(savedAccount);
     }
 
-    public userProfileResponseDTO getByUsername(String username) {
-        userAccount account = userAccountRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    public userProfileResponseDTO loginCustomerByUsername(String username) {
+        if (username == null || username.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is required");
+        }
+
+        userAccount account = repository.findByUsernameIgnoreCase(username.trim())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer account not found"));
+
+        if (!"ROLE_USER".equalsIgnoreCase(account.getRole())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Use staff/admin login for this account");
+        }
+
         return toProfileDTO(account);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        userAccount account = userAccountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    private String normalizeFulfillment(String rawValue) {
+        String clean = rawValue.trim().toUpperCase();
+        if (!clean.equals("PICK_UP") && !clean.equals("DELIVERY")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fulfillment type must be PICK_UP or DELIVERY");
+        }
+        return clean;
+    }
 
-        String cleanRole = account.getRole().replace("ROLE_", "");
-
-        return User.builder()
-                .username(account.getUsername())
-                .password(account.getPassword())
-                .roles(cleanRole)
-                .build();
+    private String normalizePayment(String rawValue) {
+        String clean = rawValue.trim().toUpperCase();
+        if (!clean.equals("CASH") && !clean.equals("ONLINE_PAYMENT")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment method must be CASH or ONLINE_PAYMENT");
+        }
+        return clean;
     }
 
     private userProfileResponseDTO toProfileDTO(userAccount account) {
@@ -77,6 +83,8 @@ public class authService implements UserDetailsService {
                 account.getEmail(),
                 account.getMobileNumber(),
                 account.getDefaultDeliveryAddress(),
+                account.getDefaultFulfillmentType(),
+                account.getDefaultPaymentMethod(),
                 account.getRole()
         );
     }

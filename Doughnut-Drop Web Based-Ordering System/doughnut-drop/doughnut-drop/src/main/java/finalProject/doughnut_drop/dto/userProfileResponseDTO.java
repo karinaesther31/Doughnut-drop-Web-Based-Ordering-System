@@ -7,5 +7,7 @@ public record userProfileResponseDTO(
         String email,
         String mobileNumber,
         String defaultDeliveryAddress,
+        String defaultFulfillmentType,
+        String defaultPaymentMethod,
         String role
 ){}
