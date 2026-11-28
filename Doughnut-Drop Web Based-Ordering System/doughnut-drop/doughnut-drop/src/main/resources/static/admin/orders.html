@@ -53,8 +53,55 @@
                 <th>Actions</th>
             </tr>
             </thead>
+            <tbody id="orderTable">
+            <tr>
+                <td colspan="7">No orders available.</td>
+            </tr>
+            </tbody>
         </table>
     </section>
+
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal=content">
+            <h2>Order Details</h2>
+
+            <div id="orderDetailsContent">
+                <div class="order-info">
+                    <h3>Order Information</h3>
+                    <p>Order ID: <span id="detailOrderId"></span></p>
+                    <p>Order Date: <span id="detailOrderDate"></span></p>
+                    <p>Order Status: <span id="detailOrderStatus"></span></p>
+                </div>
+
+                <div class="customer-info">
+                    <h3>Customer Information:</h3>
+                    <p>Customer Name: <span id="detailCostumerName"></span></p>
+                    <p>Contact Number:<span id="detailContactNumber"></span></p>
+                </div>
+                <div class="order-items">
+                    <h3>Selected Flavors</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Flavor</th>
+                            <th>Quantity</th>
+                        </tr>
+                        </thead>
+                        <tbody id="detailFlavorTable">
+                        </tbody>
+                    </table>
+                    <p>Total Pieces:<span id="detailTotalPieces">0</span>/21</p>
+                </div>
+                <div class="paymen-info">
+                    <h3>Payment Information</h3>
+                    <p>Payment Method: <span id="detailPaymentMethod"></span></p>
+                    <p>Payment Status: <span id="detailPaymentStatus"></span></p>
+                    <p>Total Amount: <span id="detailTotalAmount"></span></p>
+                </div>
+            </div>
+            <button type="button" id="closeOrderDetailsBtn">Close</button>
+        </div>
+    </div>
 </main>
 <script src="/js/admin.js"></script>
 </body>

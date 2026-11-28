@@ -1,0 +1,9 @@
+# Maven generated files
+target/
+
+#Intelij files
+.idea/
+*.iml
+
+#Compiled Java Files
+*.class
