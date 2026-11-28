@@ -78,6 +78,17 @@ body {
     padding: 40px 24px;
 }
 
+.login-section {
+    min-height: calc(100vh - 58px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background:
+            linear-gradient(120deg, rgba(42, 24, 16, 0.52) 0%, rgba(109, 46, 70, 0.38) 55%, rgba(42, 24, 16, 0.48) 100%),
+            url("../images/hero-donuts.jpg") center / cover no-repeat;
+}
+
 .hero-inner {
     max-width: 1120px;
     margin: 0 auto;

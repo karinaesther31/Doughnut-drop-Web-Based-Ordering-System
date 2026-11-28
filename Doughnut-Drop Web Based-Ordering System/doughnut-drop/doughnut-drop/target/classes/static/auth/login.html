@@ -8,7 +8,8 @@
     <style>
         .auth-wrapper {
             max-width: 480px;
-            margin: 36px auto;
+            width: 100%;
+            margin: 0 auto;
             padding: 0 16px;
         }
         .auth-card {
@@ -16,7 +17,7 @@
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 8px 24px rgba(42, 24, 16, 0.08);
+            box-shadow: 0 12px 30px rgba(42, 24, 16, 0.24);
         }
         .auth-tabs {
             display: grid;
@@ -84,116 +85,118 @@
     </nav>
 </header>
 
-<main class="auth-wrapper">
-    <div class="auth-card">
-        <div class="auth-tabs">
-            <button id="tabLogin" class="auth-tab active" type="button">Sign In</button>
-            <button id="tabRegister" class="auth-tab" type="button">Create Account</button>
+<main class="login-section">
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button id="tabLogin" class="auth-tab active" type="button">Sign In</button>
+                <button id="tabRegister" class="auth-tab" type="button">Create Account</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="login" data-form="login">
+                <h2 style="margin:0 0 6px;">Welcome Back</h2>
+                <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
+                    Customers can sign in with their username or email; Staff and Admin can sign in with their password.
+                </p>
+
+                <div class="auth-field">
+                    <label for="loginIdentifier">Username or Email</label>
+                    <input id="loginIdentifier" type="text" placeholder="Enter username or email" required />
+                </div>
+
+                <div class="auth-field">
+                    <label for="loginPassword">Password (optional for Customer login)</label>
+                    <input id="loginPassword" type="password" placeholder="Required for Staff or Admin" />
+                </div>
+
+                <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
+                    Sign In
+                </button>
+                <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
+                    Don&apos;t have an account?
+                    <a href="#register" id="switchToRegisterLink" style="color:var(--accent);font-weight:700;">Create Account</a>
+                </p>
+            </form>
+
+            <!-- Create Account Form -->
+            <form id="register" data-form="register" style="display:none;">
+                <h2 style="margin:0 0 6px;">Create Account</h2>
+                <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
+                    Register a new account for Doughnut Drop.
+                </p>
+
+                <div class="auth-field">
+                    <label for="regFullName">Full Name</label>
+                    <input id="regFullName" type="text" placeholder="Enter full name" required />
+                </div>
+
+                <div class="auth-row">
+                    <div class="auth-field">
+                        <label for="regUsername">Username</label>
+                        <input id="regUsername" type="text" placeholder="Choose a username" required />
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regMobile">Mobile Number</label>
+                        <input id="regMobile" type="text" placeholder="Enter mobile number" required />
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label for="regEmail">Email Address</label>
+                    <input id="regEmail" type="email" placeholder="Enter email address" required />
+                </div>
+
+                <div class="auth-field">
+                    <label for="regAddress">Default Delivery Address</label>
+                    <input id="regAddress" type="text" placeholder="Enter delivery address" required />
+                </div>
+
+                <div class="auth-row">
+                    <div class="auth-field">
+                        <label for="regFulfillment">Default Fulfillment</label>
+                        <select id="regFulfillment" required>
+                            <option value="DELIVERY">DELIVERY</option>
+                            <option value="PICK_UP">PICK_UP</option>
+                        </select>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regPayment">Default Payment</label>
+                        <select id="regPayment" required>
+                            <option value="CASH">CASH</option>
+                            <option value="ONLINE_PAYMENT">ONLINE_PAYMENT</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="auth-row">
+                    <div class="auth-field">
+                        <label for="regRole">Role</label>
+                        <select id="regRole" required>
+                            <option value="ROLE_USER">Customer (ROLE_USER)</option>
+                            <option value="ROLE_ADMIN">Staff / Admin (ROLE_ADMIN)</option>
+                        </select>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regPassword">Password</label>
+                        <input id="regPassword" type="password" placeholder="Required for Admin" />
+                    </div>
+                </div>
+
+                <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
+                    Create Account
+                </button>
+                <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
+                    Already have an account?
+                    <a href="#login" id="switchToLoginLink" style="color:var(--accent);font-weight:700;">Sign In</a>
+                </p>
+            </form>
+
+            <div id="authStatus" class="auth-status"></div>
         </div>
-
-        <!-- Sign In Form -->
-        <form id="login" data-form="login">
-            <h2 style="margin:0 0 6px;">Welcome Back</h2>
-            <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
-                Customers can sign in with their username or email; Staff and Admin can sign in with their password.
-            </p>
-
-            <div class="auth-field">
-                <label for="loginIdentifier">Username or Email</label>
-                <input id="loginIdentifier" type="text" placeholder="Enter username or email" required />
-            </div>
-
-            <div class="auth-field">
-                <label for="loginPassword">Password (optional for Customer login)</label>
-                <input id="loginPassword" type="password" placeholder="Required for Staff or Admin" />
-            </div>
-
-            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
-                Sign In
-            </button>
-            <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
-                Don&apos;t have an account?
-                <a href="#register" id="switchToRegisterLink" style="color:var(--accent);font-weight:700;">Create Account</a>
-            </p>
-        </form>
-
-        <!-- Create Account Form -->
-        <form id="register" data-form="register" style="display:none;">
-            <h2 style="margin:0 0 6px;">Create Account</h2>
-            <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
-                Register a new account for Doughnut Drop.
-            </p>
-
-            <div class="auth-field">
-                <label for="regFullName">Full Name</label>
-                <input id="regFullName" type="text" placeholder="Enter full name" required />
-            </div>
-
-            <div class="auth-row">
-                <div class="auth-field">
-                    <label for="regUsername">Username</label>
-                    <input id="regUsername" type="text" placeholder="Choose a username" required />
-                </div>
-
-                <div class="auth-field">
-                    <label for="regMobile">Mobile Number</label>
-                    <input id="regMobile" type="text" placeholder="Enter mobile number" required />
-                </div>
-            </div>
-
-            <div class="auth-field">
-                <label for="regEmail">Email Address</label>
-                <input id="regEmail" type="email" placeholder="Enter email address" required />
-            </div>
-
-            <div class="auth-field">
-                <label for="regAddress">Default Delivery Address</label>
-                <input id="regAddress" type="text" placeholder="Enter delivery address" required />
-            </div>
-
-            <div class="auth-row">
-                <div class="auth-field">
-                    <label for="regFulfillment">Default Fulfillment</label>
-                    <select id="regFulfillment" required>
-                        <option value="DELIVERY">DELIVERY</option>
-                        <option value="PICK_UP">PICK_UP</option>
-                    </select>
-                </div>
-
-                <div class="auth-field">
-                    <label for="regPayment">Default Payment</label>
-                    <select id="regPayment" required>
-                        <option value="CASH">CASH</option>
-                        <option value="ONLINE_PAYMENT">ONLINE_PAYMENT</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="auth-row">
-                <div class="auth-field">
-                    <label for="regRole">Role</label>
-                    <select id="regRole" required>
-                        <option value="ROLE_USER">Customer (ROLE_USER)</option>
-                        <option value="ROLE_ADMIN">Staff / Admin (ROLE_ADMIN)</option>
-                    </select>
-                </div>
-
-                <div class="auth-field">
-                    <label for="regPassword">Password</label>
-                    <input id="regPassword" type="password" placeholder="Required for Admin" />
-                </div>
-            </div>
-
-            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
-                Create Account
-            </button>
-            <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
-                Already have an account?
-                <a href="#login" id="switchToLoginLink" style="color:var(--accent);font-weight:700;">Sign In</a>
-            </p>
-        </form>
-
-        <div id="authStatus" class="auth-status"></div>
     </div>
 </main>
 

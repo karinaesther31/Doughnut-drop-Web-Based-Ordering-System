@@ -125,3 +125,130 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="newport"
+          cotent="width=device-width,initial-scale=1.0">
+
+    <title>Doughnut Drop | Admin Dashboard</title>
+
+    <link rel="stylesheet"href="/css/style.css">
+</head>
+
+<body>
+<!__SIDEBAR-->
+<aside class="sidebar">
+    <h2>🍩 Doughnut Drop</h2>
+    <nav>
+        <a href="/admin/dashboard.html" class="active">
+            Dashboard
+        </a>
+
+        <a href="/admin/products.html">
+            Products
+        </a>
+
+        <a href="/admin/orders.html">
+            Orders
+        </a>
+    </nav>
+
+    <a href="/auth/login.html" class="logout">
+        Logout
+    </a>
+
+</aside>
+
+
+<!--MAIN CONTENT-->
+<main class="main-content">
+    <header class="top-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p1>Welcome to Doughnut Drop Admin Panel!</p1>
+        </div>
+
+        <div class="admin-profile">
+            👤 Administrator
+        </div>
+    </header>
+
+    <!--DASHBOARD CARDS-->
+    <section class="dashboard-cards">
+
+        <div class="card">
+            <p>Total Products</p>
+            <h2>12</h2>
+            <span>Available products</span>
+        </div>
+
+        <div class="card">
+            <p>Total Orders</p>
+            <span>All customer orders</span>
+        </div>
+
+        <div class="card">
+            <p>Pending Orders</p>
+            <h2>8</h2>
+            <span>Waiting for processing</span>
+        </div>
+
+        <div class="card">
+            <p>17</p>
+            <span>Successfully completed</span>
+        </div>
+
+    </section>
+
+    <!--RECENT ORDERS-->
+    <section class="recent-orders">
+
+        <h2>Recent Orders</h2>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr>
+                <td>#001</td>
+                <td>Maria</td>
+                <td>Chocolate Donut</td>
+                <td>Pending</td>
+            </tr>
+
+            <tr>
+                <td>#002</td>
+                <td>Anna</td>
+                <td>Matcha Donut</td>
+                <td>Completed</td>
+            </tr>
+
+            <tr>
+                <td>#003</td>
+                <td>John</td>
+                <td>White Chocolate Donut</td>
+                <td>Pending</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+</aside>
+
+
+<script src="/js/admin.js"></script>
+
+</body>
+</html>
