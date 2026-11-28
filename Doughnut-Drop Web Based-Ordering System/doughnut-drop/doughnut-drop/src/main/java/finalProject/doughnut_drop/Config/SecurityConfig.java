@@ -72,8 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/cart/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
 
-
-                        .requestMatchers(HttpMethod.POST, "/api/doughnuts/*/restock").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/", "/auth/**", "/css/**", "/js/**", "/images/**", "/api/auth/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
