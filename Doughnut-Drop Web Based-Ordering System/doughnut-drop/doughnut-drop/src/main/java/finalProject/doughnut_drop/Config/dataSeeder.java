@@ -14,6 +14,12 @@ import java.util.List;
 
 @Configuration
 public class dataSeeder {
+    private record staffAdmin(
+            String username,
+            String password
+
+    ) {
+    }
 
     @Bean
     CommandLineRunner seedDatabase(
@@ -21,7 +27,7 @@ public class dataSeeder {
             userAccountRepository userRepository,
             PasswordEncoder passwordEncoder
     ) {
-        return _ -> {
+        return args -> {
             if (doughnutRepository.count() == 0) {
                 BigDecimal boxPrice = new BigDecimal("125.00");
                 doughnutRepository.saveAll(List.of(
@@ -33,21 +39,28 @@ public class dataSeeder {
                 ));
             }
 
-            boolean adminExists = userRepository.findAll().stream()
-                    .anyMatch(u -> "admin".equalsIgnoreCase(u.getUsername()));
+            List<staffAdmin> privilegeAccount = List.of(
+                    new staffAdmin("Admin01", "admin1231"),
+                    new staffAdmin("Staff01", "Staff1231")
+            );
 
-            if (!adminExists) {
-                userAccount admin = new userAccount();
-                admin.setFullName("Doughnut Drop Staff/Admin");
-                admin.setUsername("admin");
-                admin.setEmail("admin@doughnutdrop.local");
-                admin.setMobileNumber("09000000000");
-                admin.setDefaultDeliveryAddress("Doughnut Drop Store");
-                admin.setDefaultFulfillmentType("PICK_UP");
-                admin.setDefaultPaymentMethod("CASH");
-                admin.setRole("ROLE_ADMIN");
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                userRepository.save(admin);
+            for (staffAdmin seed : privilegeAccount) {
+                boolean exists = userRepository.findAll().stream()
+                        .anyMatch(u -> seed.username().equalsIgnoreCase(u.getUsername()));
+
+                if (!exists) {
+                    userAccount account = new userAccount();
+                    account.setFullName(seed.username());
+                    account.setUsername(seed.username());
+                    account.setEmail(seed.username().toLowerCase() + "@doughnutdrop.local");
+                    account.setMobileNumber("09000000000");
+                    account.setDefaultDeliveryAddress("Doughnut Drop Store");
+                    account.setDefaultFulfillmentType("PICK_UP");
+                    account.setDefaultPaymentMethod("CASH");
+                    account.setRole(seed.username().toUpperCase().startsWith("ADMIN") ? "ROLE_ADMIN" : "ROLE_STAFF");
+                    account.setPassword(passwordEncoder.encode(seed.password()));
+                    userRepository.save(account);
+                }
             }
         };
     }

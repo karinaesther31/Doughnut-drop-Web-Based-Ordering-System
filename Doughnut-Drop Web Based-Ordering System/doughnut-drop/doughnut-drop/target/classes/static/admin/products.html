@@ -2,9 +2,154 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products | Doughnut Drop</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
+<header class="topbar">
+    <a class="brand-link" href="/admin/dashboard.html">🍩 DOUGHNUT DROP - ADMIN</a>
+
+    <nav class="nav-links">
+       <a href="/admin/dashboard.html">Dashboard</a>
+        <a class="active" href="/admin/products.html">Products</a>
+        <a href="/admin/orders.html">Orders</a>
+        <a href="/auth/login.html">Logout</a>
+    </nav>
+</header>
+
+<main class="container">
+    <section style="margin-bottom:25px;">
+        <h1>Product Management</h1>
+        <p>Manage your doughnut products, prices, and stocks.</p>
+    </section>
+    <section style="display:flex;justify-content:space-between;align-items: center;flex-wrap: wrap;gap:12px;margin-bottom:20px;">
+        <label for="productSearch">Search Products</label>
+        <input
+            type="search"
+            id="productSearch"
+            placeholder="Search products..."
+            style="padding:10px;border-radius:10px;border:1px solid var(--border);">
+        <button class="btn-primary" id="addProductBtn" type="button"> + Add Product</button>
+    </section>
+    <label for="categoryFilter">Filter by Category</label>
+    <select id="categoryFilter"
+            style="padding:10px; border-radius:10px; border:1px solid var(--border);">
+        <option value="">All Categories</option>
+        <option value="Classic Boxes">Classic Boxes</option>
+    </select>
+    <section style="overflow-x: auto;">
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody id="adminProductTable">
+            <tr>
+                <td colspan="8">No products available</td>;
+            </tr>
+            </tbody>
+
+        </table>
+    </section>
+    <section class="table-container">
+        <h2>Flavor Management</h2>
+        <p>Manage the available donut flavors for costumer orders.</p>
+        <div class="flavor-form">
+            <h3>Add New Flavor</h3>
+            <label for="flavorName">Flavor Name</label>
+            <input
+                type="text"
+                id="flavorName"
+                placeholder="Enter donut flavor">
+            <button type="button" id="addFlavorBtn">
+                Pick your flavor
+            </button>
+        </div>
+
+        <div class="flavor-list">
+            <h3>Available Flavors</h3>
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                <tr>
+                    <th>Flavor Id</th>
+                    <th>Flavor Name</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="adminFlavorTable">
+                <tr>
+                    <td colspan="3">No flavors available.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<div id="productModal"
+     style="display:none;position:fixed;inset:0;background: rgba(0,0,0,0.5);z-index:1000;
+     justify-content: center;align-items:center;padding:20px; ">
+    <div style="background: white;padding:25px; border-radius:15px; width:100%;max-width:450px;">
+    <h2 id="modalTitle">Add Product</h2>
+    <form id="productForm">
+        <input type="hidden" id="productId">
+        <label for="productName">Product Name</label>
+        <input type="text" id="productName" required style="width:100%; padding:10px; margin:8px 0 15px;">
+        <label for="productCategory">Category</label>
+        <select id="productCategory" required style="width:100%; padding:10px; margin:8px 0 15px;">
+            <option value="">Select Category</option>
+            <option value="21-Piece Box">21-Piece Box</option>
+        </select>
+
+        <label for="productPrice">Price (₱)</label>
+        <input
+                type="number"
+                id="productPrice"
+                min="0.01"
+                step="0.01"
+                required
+                style="width:100%; padding:10px; margin:8px 0 15px;">
+
+        <label for="productStock">Stock</label>
+        <input
+            type="number"
+            id="productStock"
+            min="0"
+            required
+            style="width:100%; padding:10px; margin:8px 0 15px;">
+
+        <label for="productImage">Product Image</label>
+        <input
+            type="file"
+            id="productImage"
+            accept="image/*"
+            style="width:100%; padding:10px; margin:8px 0 15px;">
+        <img
+            id="imagePreview"
+            src=""
+            alt="Product Image Preview"
+            style="display:none; width:120px; height:120px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button type="submit" class="btn-primary">Save Product</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+    </form>
+</div>
+</div>
+
+<script src="/js/admin.js"></script>
 
 </body>
 </html>

@@ -5,74 +5,89 @@ import finalProject.doughnut_drop.dto.userProfileResponseDTO;
 import finalProject.doughnut_drop.entity.userAccount;
 import finalProject.doughnut_drop.repository.userAccountRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class authService {
 
-    private final userAccountRepository repository;
+    private final userAccountRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public authService(userAccountRepository repository) {
-        this.repository = repository;
+    public authService(userAccountRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public userProfileResponseDTO registerCustomer(registerRequestDTO req) {
-        String normalizedUsername = req.username().trim();
-        String normalizedEmail = req.email().trim().toLowerCase();
+        String cleanUsername = req.username().trim();
+        String cleanEmail = req.email().trim().toLowerCase();
 
-        if (repository.existsByUsernameIgnoreCase(normalizedUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists: " + normalizedUsername);
+        boolean usernameTaken = userRepository.findAll().stream()
+                .anyMatch(u -> cleanUsername.equalsIgnoreCase(u.getUsername()));
+        if (usernameTaken) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
         }
 
-        if (repository.existsByEmailIgnoreCase(normalizedEmail)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists: " + normalizedEmail);
+        boolean emailTaken = userRepository.findAll().stream()
+                .anyMatch(u -> u.getEmail() != null && cleanEmail.equalsIgnoreCase(u.getEmail()));
+        if (emailTaken) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");
         }
 
-        userAccount account = new userAccount(
-                req.fullName().trim(),
-                normalizedUsername,
-                normalizedEmail,
-                req.mobileNumber().trim(),
-                req.defaultDeliveryAddress().trim(),
-                normalizeFulfillment(req.defaultFulfillmentType()),
-                normalizePayment(req.defaultPaymentMethod()),
-                "ROLE_USER"
-        );
+        String fulfillment = req.defaultFulfillmentType().trim().toUpperCase();
+        String payment = req.defaultPaymentMethod().trim().toUpperCase();
+        String defaultAddress = (req.defaultDeliveryAddress() == null || req.defaultDeliveryAddress().isBlank())
+                ? "Not set"
+                : req.defaultDeliveryAddress().trim();
 
-        userAccount savedAccount = repository.save(account);
-        return toProfileDTO(savedAccount);
+        userAccount account = new userAccount();
+        account.setFullName(req.fullName().trim());
+        account.setUsername(cleanUsername);
+        account.setEmail(cleanEmail);
+        account.setMobileNumber(req.mobileNumber().trim());
+        account.setDefaultDeliveryAddress(defaultAddress);
+        account.setDefaultFulfillmentType(fulfillment);
+        account.setDefaultPaymentMethod(payment);
+        account.setRole("ROLE_USER");
+        account.setPassword(null);
+
+        userAccount saved = userRepository.save(account);
+        return toProfileDTO(saved);
     }
 
     public userProfileResponseDTO loginCustomerByUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is required");
-        }
+        String cleanUsername = username.trim();
 
-        userAccount account = repository.findByUsernameIgnoreCase(username.trim())
+        userAccount account = userRepository.findAll().stream()
+                .filter(u -> cleanUsername.equalsIgnoreCase(u.getUsername()))
+                .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer account not found"));
 
         if (!"ROLE_USER".equalsIgnoreCase(account.getRole())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Use staff/admin login for this account");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please use staff login for staff or admin accounts");
         }
 
         return toProfileDTO(account);
     }
 
-    private String normalizeFulfillment(String rawValue) {
-        String clean = rawValue.trim().toUpperCase();
-        if (!clean.equals("PICK_UP") && !clean.equals("DELIVERY")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fulfillment type must be PICK_UP or DELIVERY");
-        }
-        return clean;
-    }
+    public userProfileResponseDTO loginStaffOrAdmin(String username, String password) {
+        String cleanUsername = username.trim();
 
-    private String normalizePayment(String rawValue) {
-        String clean = rawValue.trim().toUpperCase();
-        if (!clean.equals("CASH") && !clean.equals("ONLINE_PAYMENT")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment method must be CASH or ONLINE_PAYMENT");
+        userAccount account = userRepository.findAll().stream()
+                .filter(u -> cleanUsername.equalsIgnoreCase(u.getUsername()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+
+        boolean isAdminOrStaff = "ROLE_ADMIN".equalsIgnoreCase(account.getRole())
+                || "ROLE_STAFF".equalsIgnoreCase(account.getRole());
+
+        if (!isAdminOrStaff || account.getPassword() == null || !passwordEncoder.matches(password, account.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
-        return clean;
+
+        return toProfileDTO(account);
     }
 
     private userProfileResponseDTO toProfileDTO(userAccount account) {

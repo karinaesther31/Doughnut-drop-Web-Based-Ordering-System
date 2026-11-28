@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
@@ -29,50 +30,40 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(userAccountRepository userRepository) {
         return username -> {
             userAccount account = userRepository.findAll().stream()
-                    .filter(u -> u.getUsername() != null && username.equalsIgnoreCase(u.getUsername()))
+                    .filter(u -> username.trim().equalsIgnoreCase(u.getUsername()))
                     .findFirst()
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-            String rawRole = account.getRole() != null ? account.getRole().trim() : "USER";
-            String roleName = rawRole.startsWith("ROLE_") ? rawRole.substring(5) : rawRole;
+            String rawRole = account.getRole() != null ? account.getRole().replace("ROLE_", "") : "USER";
+            String encodedPassword = account.getPassword() != null ? account.getPassword() : "";
 
-            return User.builder()
-                    .username(account.getUsername())
-                    .password(resolvePassword(account.getPassword()))
-                    .roles(roleName)
+            return User.withUsername(account.getUsername())
+                    .password(encodedPassword)
+                    .roles(rawRole)
                     .build();
         };
     }
 
-    private String resolvePassword(String password) {
-        // Customer accounts may have null passwords; prefix "{noop}" when no BCrypt hash exists
-        if (password == null || password.isBlank()) {
-            return "{noop}";
-        }
-        if (password.startsWith("$2a$")
-                || password.startsWith("$2b$")
-                || password.startsWith("$2y$")
-                || password.startsWith("{")) {
-            return password;
-        }
-        return "{noop}" + password;
-    }
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/auth/**", "/admin/**", "/css/**", "/js/**", "/images/**").permitAll()
+
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+
+
                         .requestMatchers(HttpMethod.GET, "/api/doughnuts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/doughnuts/*/restock").hasRole("ADMIN")
+                        .requestMatchers("/api/cart/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
-                        .anyRequest().permitAll()
+
+
+                        .requestMatchers(HttpMethod.POST, "/api/doughnuts/*/restock").hasAnyRole("ADMIN", "STAFF")
+
+                        .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

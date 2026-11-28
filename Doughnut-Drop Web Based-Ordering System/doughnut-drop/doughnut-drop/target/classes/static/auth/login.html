@@ -1,10 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doughnut Drop — Login &amp; Create Account</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .auth-wrapper {
+            max-width: 480px;
+            margin: 36px auto;
+            padding: 0 16px;
+        }
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(42, 24, 16, 0.08);
+        }
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .auth-tab {
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--ink);
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .auth-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .auth-field {
+            margin-bottom: 12px;
+        }
+        .auth-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .auth-field input,
+        .auth-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            background: #fff;
+        }
+        .auth-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media (max-width: 520px) {
+            .auth-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .auth-status {
+            margin-top: 12px;
+            font-size: 13px;
+            min-height: 18px;
+        }
+    </style>
 </head>
 <body>
+<header class="topbar">
+    <a class="brand-link" href="/admin/dashboard.html">🍩 DOUGHNUT DROP</a>
+    <nav class="nav-links">
+        <a href="/admin/dashboard.html">Dashboard</a>
+        <a href="/admin/products.html">Products</a>
+        <a href="/admin/orders.html">Orders</a>
+        <a class="active" href="/auth/login.html">Login</a>
+    </nav>
+</header>
 
+<main class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-tabs">
+            <button id="tabLogin" class="auth-tab active" type="button">Sign In</button>
+            <button id="tabRegister" class="auth-tab" type="button">Create Account</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="login" data-form="login">
+            <h2 style="margin:0 0 6px;">Welcome Back</h2>
+            <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
+                Customers can sign in with their username or email; Staff and Admin can sign in with their password.
+            </p>
+
+            <div class="auth-field">
+                <label for="loginIdentifier">Username or Email</label>
+                <input id="loginIdentifier" type="text" placeholder="Enter username or email" required />
+            </div>
+
+            <div class="auth-field">
+                <label for="loginPassword">Password (optional for Customer login)</label>
+                <input id="loginPassword" type="password" placeholder="Required for Staff or Admin" />
+            </div>
+
+            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
+                Sign In
+            </button>
+            <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
+                Don&apos;t have an account?
+                <a href="#register" id="switchToRegisterLink" style="color:var(--accent);font-weight:700;">Create Account</a>
+            </p>
+        </form>
+
+        <!-- Create Account Form -->
+        <form id="register" data-form="register" style="display:none;">
+            <h2 style="margin:0 0 6px;">Create Account</h2>
+            <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">
+                Register a new account for Doughnut Drop.
+            </p>
+
+            <div class="auth-field">
+                <label for="regFullName">Full Name</label>
+                <input id="regFullName" type="text" placeholder="Enter full name" required />
+            </div>
+
+            <div class="auth-row">
+                <div class="auth-field">
+                    <label for="regUsername">Username</label>
+                    <input id="regUsername" type="text" placeholder="Choose a username" required />
+                </div>
+
+                <div class="auth-field">
+                    <label for="regMobile">Mobile Number</label>
+                    <input id="regMobile" type="text" placeholder="Enter mobile number" required />
+                </div>
+            </div>
+
+            <div class="auth-field">
+                <label for="regEmail">Email Address</label>
+                <input id="regEmail" type="email" placeholder="Enter email address" required />
+            </div>
+
+            <div class="auth-field">
+                <label for="regAddress">Default Delivery Address</label>
+                <input id="regAddress" type="text" placeholder="Enter delivery address" required />
+            </div>
+
+            <div class="auth-row">
+                <div class="auth-field">
+                    <label for="regFulfillment">Default Fulfillment</label>
+                    <select id="regFulfillment" required>
+                        <option value="DELIVERY">DELIVERY</option>
+                        <option value="PICK_UP">PICK_UP</option>
+                    </select>
+                </div>
+
+                <div class="auth-field">
+                    <label for="regPayment">Default Payment</label>
+                    <select id="regPayment" required>
+                        <option value="CASH">CASH</option>
+                        <option value="ONLINE_PAYMENT">ONLINE_PAYMENT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="auth-row">
+                <div class="auth-field">
+                    <label for="regRole">Role</label>
+                    <select id="regRole" required>
+                        <option value="ROLE_USER">Customer (ROLE_USER)</option>
+                        <option value="ROLE_ADMIN">Staff / Admin (ROLE_ADMIN)</option>
+                    </select>
+                </div>
+
+                <div class="auth-field">
+                    <label for="regPassword">Password</label>
+                    <input id="regPassword" type="password" placeholder="Required for Admin" />
+                </div>
+            </div>
+
+            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:6px;" type="submit">
+                Create Account
+            </button>
+            <p style="text-align:center;font-size:13px;margin:14px 0 0;color:var(--muted);">
+                Already have an account?
+                <a href="#login" id="switchToLoginLink" style="color:var(--accent);font-weight:700;">Sign In</a>
+            </p>
+        </form>
+
+        <div id="authStatus" class="auth-status"></div>
+    </div>
+</main>
+
+<script src="/js/app.js"></script>
+<script>
+    (function () {
+        const USERS_STORAGE_KEY = "dd_local_users_v1";
+        const CURRENT_USER_KEY = "dd_current_user_v1";
+
+        const tabLogin = document.getElementById("tabLogin");
+        const tabRegister = document.getElementById("tabRegister");
+        const loginForm = document.getElementById("login");
+        const registerForm = document.getElementById("register");
+        const authStatus = document.getElementById("authStatus");
+        const regRoleSelect = document.getElementById("regRole");
+        const regPasswordInput = document.getElementById("regPassword");
+
+        function setStatus(message, isError) {
+            authStatus.style.color = isError ? "var(--danger)" : "var(--ok)";
+            authStatus.textContent = message;
+        }
+
+        function syncPasswordRequirement() {
+            const isAdmin = regRoleSelect.value === "ROLE_ADMIN";
+            regPasswordInput.required = isAdmin;
+            regPasswordInput.placeholder = isAdmin ? "Required for Admin" : "Optional for Customer";
+        }
+
+        function showMode(mode) {
+            const isRegister = mode === "register";
+            tabLogin.classList.toggle("active", !isRegister);
+            tabRegister.classList.toggle("active", isRegister);
+            loginForm.style.display = isRegister ? "none" : "block";
+            registerForm.style.display = isRegister ? "block" : "none";
+            authStatus.textContent = "";
+            syncPasswordRequirement();
+        }
+
+        function getLocalUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || "[]");
+            } catch (err) {
+                return [];
+            }
+        }
+
+        function saveLocalUsers(users) {
+            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        }
+
+        tabLogin.addEventListener("click", () => showMode("login"));
+        tabRegister.addEventListener("click", () => showMode("register"));
+        regRoleSelect.addEventListener("change", syncPasswordRequirement);
+
+        document.getElementById("switchToRegisterLink").addEventListener("click", e => {
+            e.preventDefault();
+            showMode("register");
+        });
+
+        document.getElementById("switchToLoginLink").addEventListener("click", e => {
+            e.preventDefault();
+            showMode("login");
+        });
+
+        if (window.location.hash === "#register") {
+            showMode("register");
+        } else {
+            syncPasswordRequirement();
+        }
+
+        loginForm.addEventListener("submit", async e => {
+            e.preventDefault();
+            const identifier = document.getElementById("loginIdentifier").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            try {
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: identifier,
+                        email: identifier,
+                        password: password || null
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data));
+                    setStatus("Signed in successfully! Redirecting...", false);
+                    setTimeout(() => {
+                        window.location.href = data.role === "ROLE_ADMIN"
+                            ? "/admin/dashboard.html"
+                            : "/admin/products.html";
+                    }, 600);
+                    return;
+                }
+                if (res.status === 400 || res.status === 401) {
+                    const errData = await res.json().catch(() => ({}));
+                    setStatus(errData.error || "Invalid username, email, or password.", true);
+                    return;
+                }
+            } catch (err) {
+                // Fall back to local storage if backend login endpoint is unavailable
+            }
+
+            const users = getLocalUsers();
+            const matched = users.find(u =>
+                u.username.toLowerCase() === identifier.toLowerCase() ||
+                u.email.toLowerCase() === identifier.toLowerCase()
+            );
+
+            if (!matched) {
+                setStatus("Account not found. Please create an account first.", true);
+                return;
+            }
+            if (matched.password && matched.password !== password) {
+                setStatus("Incorrect password.", true);
+                return;
+            }
+
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(matched));
+            setStatus("Signed in as " + matched.fullName + "! Redirecting...", false);
+            setTimeout(() => {
+                window.location.href = matched.role === "ROLE_ADMIN"
+                    ? "/admin/dashboard.html"
+                    : "/admin/products.html";
+            }, 600);
+        });
+
+        registerForm.addEventListener("submit", async e => {
+            e.preventDefault();
+            const fullName = document.getElementById("regFullName").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
+            const mobileNumber = document.getElementById("regMobile").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const defaultDeliveryAddress = document.getElementById("regAddress").value.trim();
+            const defaultFulfillmentType = document.getElementById("regFulfillment").value;
+            const defaultPaymentMethod = document.getElementById("regPayment").value;
+            const role = document.getElementById("regRole").value;
+            const rawPassword = document.getElementById("regPassword").value;
+
+            if (role === "ROLE_ADMIN" && !rawPassword) {
+                setStatus("A password is required for Admin accounts.", true);
+                return;
+            }
+
+            const payload = {
+                fullName: fullName,
+                username: username,
+                email: email,
+                mobileNumber: mobileNumber,
+                defaultDeliveryAddress: defaultDeliveryAddress,
+                defaultFulfillmentType: defaultFulfillmentType,
+                defaultPaymentMethod: defaultPaymentMethod,
+                password: rawPassword ? rawPassword : null,
+                role: role
+            };
+
+            try {
+                const res = await fetch("/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    setStatus("Account created! You can now sign in.", false);
+                    registerForm.reset();
+                    setTimeout(() => {
+                        showMode("login");
+                        document.getElementById("loginIdentifier").value = username;
+                    }, 700);
+                    return;
+                }
+                if (res.status === 400 || res.status === 409) {
+                    const errData = await res.json().catch(() => ({}));
+                    setStatus(errData.error || "Could not create account.", true);
+                    return;
+                }
+            } catch (err) {
+                // Fall back to local storage if backend register endpoint is unavailable
+            }
+
+            const users = getLocalUsers();
+            const duplicate = users.some(u =>
+                u.username.toLowerCase() === username.toLowerCase() ||
+                u.email.toLowerCase() === email.toLowerCase()
+            );
+            if (duplicate) {
+                setStatus("An account with that username or email already exists.", true);
+                return;
+            }
+
+            users.push(payload);
+            saveLocalUsers(users);
+            setStatus("Account created! Switching to Sign In...", false);
+            registerForm.reset();
+            setTimeout(() => {
+                showMode("login");
+                document.getElementById("loginIdentifier").value = username;
+            }, 700);
+        });
+    })();
+</script>
 </body>
 </html>

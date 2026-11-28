@@ -24,6 +24,14 @@ public class authController {
             String username
     ) {}
 
+    public record StaffLoginRequestDTO(
+            @NotBlank(message = "Username is required")
+            String username,
+
+            @NotBlank(message = "Password is required")
+            String password
+    ) {}
+
     @PostMapping("/register")
     public ResponseEntity<userProfileResponseDTO> registerCustomer(@Valid @RequestBody registerRequestDTO req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.registerCustomer(req));
@@ -32,5 +40,10 @@ public class authController {
     @PostMapping("/login")
     public userProfileResponseDTO loginCustomer(@Valid @RequestBody CustomerLoginRequestDTO req) {
         return service.loginCustomerByUsername(req.username());
+    }
+
+    @PostMapping("/staffAdmin-login")
+    public userProfileResponseDTO loginStaffOrAdmin(@Valid @RequestBody StaffLoginRequestDTO req) {
+        return service.loginStaffOrAdmin(req.username(), req.password());
     }
 }
