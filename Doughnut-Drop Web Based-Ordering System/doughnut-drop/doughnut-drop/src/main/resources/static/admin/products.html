@@ -1,155 +1,474 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Products | Doughnut Drop</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .dash-shell {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        /* Left Sidebar (matches Dashboard & Orders) */
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 22px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px 14px;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 14px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.18s, color 0.18s;
+        }
+        .sidebar-nav a:hover {
+            background: var(--cream);
+            color: var(--ink);
+        }
+        .sidebar-nav a.active {
+            background: rgba(224, 59, 139, 0.12);
+            color: var(--accent-dark);
+            font-weight: 700;
+            border: 1px solid rgba(224, 59, 139, 0.25);
+        }
+        .logout-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            background: var(--cream);
+            color: var(--ink);
+            border: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.18s, color 0.18s;
+        }
+        .logout-link:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        /* Main Area */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 24px 28px 40px;
+        }
+        .top-header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+            box-shadow: 0 6px 20px rgba(42, 24, 16, 0.04);
+        }
+        .top-header h1 {
+            margin: 0 0 4px;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--ink);
+        }
+        .top-header p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .admin-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--cream);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+            white-space: nowrap;
+        }
+
+        /* Toolbar & Cards */
+        .toolbar-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 22px;
+            box-shadow: 0 6px 18px rgba(42, 24, 16, 0.04);
+        }
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 14px;
+            flex: 1;
+        }
+        .field-box {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 190px;
+        }
+        .field-box label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+        .field-box input,
+        .field-box select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 14px;
+        }
+        .panel-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 20px rgba(42, 24, 16, 0.04);
+        }
+        .panel-card h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--ink);
+        }
+        .panel-card > p {
+            margin: 0 0 16px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        /* Flavor Management */
+        .flavor-form {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .flavor-form h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .flavor-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 12px;
+        }
+        .flavor-list h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(42, 24, 16, 0.55);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 45px rgba(24, 12, 8, 0.28);
+            color: var(--ink);
+        }
+        .modal-box h2 {
+            margin: 0 0 14px;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .modal-field {
+            margin-bottom: 13px;
+        }
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--muted);
+        }
+        .modal-field input,
+        .modal-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 14px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 760px) {
+            .dash-shell {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .main-content {
+                padding: 18px 14px 32px;
+            }
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 <body>
+<div class="dash-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div>
+            <a href="/admin/dashboard.html" class="sidebar-brand">
+                <span>🍩</span>
+                <span>Doughnut Drop</span>
+            </a>
 
-<header class="topbar">
-    <a class="brand-link" href="/admin/dashboard.html">🍩 DOUGHNUT DROP - ADMIN</a>
-
-    <nav class="nav-links">
-       <a href="/admin/dashboard.html">Dashboard</a>
-        <a class="active" href="/admin/products.html">Products</a>
-        <a href="/admin/orders.html">Orders</a>
-        <a href="/auth/login.html">Logout</a>
-    </nav>
-</header>
-
-<main class="container">
-    <section style="margin-bottom:25px;">
-        <h1>Product Management</h1>
-        <p>Manage your doughnut products, prices, and stocks.</p>
-    </section>
-    <section style="display:flex;justify-content:space-between;align-items: center;flex-wrap: wrap;gap:12px;margin-bottom:20px;">
-        <label for="productSearch">Search Products</label>
-        <input
-            type="search"
-            id="productSearch"
-            placeholder="Search products..."
-            style="padding:10px;border-radius:10px;border:1px solid var(--border);">
-        <button class="btn-primary" id="addProductBtn" type="button"> + Add Product</button>
-    </section>
-    <label for="categoryFilter">Filter by Category</label>
-    <select id="categoryFilter"
-            style="padding:10px; border-radius:10px; border:1px solid var(--border);">
-        <option value="">All Categories</option>
-        <option value="Classic Boxes">Classic Boxes</option>
-    </select>
-    <section style="overflow-x: auto;">
-        <table style="width:100%; border-collapse: collapse;">
-            <thead>
-            <tr>
-                <th>Product ID</th>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-
-            <tbody id="adminProductTable">
-            <tr>
-                <td colspan="8">No products available</td>;
-            </tr>
-            </tbody>
-
-        </table>
-    </section>
-    <section class="table-container">
-        <h2>Flavor Management</h2>
-        <p>Manage the available donut flavors for costumer orders.</p>
-        <div class="flavor-form">
-            <h3>Add New Flavor</h3>
-            <label for="flavorName">Flavor Name</label>
-            <input
-                type="text"
-                id="flavorName"
-                placeholder="Enter donut flavor">
-            <button type="button" id="addFlavorBtn">
-                Pick your flavor
-            </button>
+            <nav class="sidebar-nav" aria-label="Admin Navigation">
+                <a href="/admin/dashboard.html">Dashboard</a>
+                <a href="/admin/products.html" class="active">Products</a>
+                <a href="/admin/orders.html">Orders</a>
+            </nav>
         </div>
 
-        <div class="flavor-list">
-            <h3>Available Flavors</h3>
-            <table style="width:100%; border-collapse:collapse;">
-                <thead>
-                <tr>
-                    <th>Flavor Id</th>
-                    <th>Flavor Name</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody id="adminFlavorTable">
-                <tr>
-                    <td colspan="3">No flavors available.</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
+        <a href="/auth/login.html" class="logout-link">Logout</a>
+    </aside>
 
-<div id="productModal"
-     style="display:none;position:fixed;inset:0;background: rgba(0,0,0,0.5);z-index:1000;
-     justify-content: center;align-items:center;padding:20px; ">
-    <div style="background: white;padding:25px; border-radius:15px; width:100%;max-width:450px;">
-    <h2 id="modalTitle">Add Product</h2>
-    <form id="productForm">
-        <input type="hidden" id="productId">
-        <label for="productName">Product Name</label>
-        <input type="text" id="productName" required style="width:100%; padding:10px; margin:8px 0 15px;">
-        <label for="productCategory">Category</label>
-        <select id="productCategory" required style="width:100%; padding:10px; margin:8px 0 15px;">
-            <option value="">Select Category</option>
-            <option value="21-Piece Box">21-Piece Box</option>
-        </select>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1>Product Management</h1>
+                <p>Manage your doughnut products, prices, and stocks.</p>
+            </div>
 
-        <label for="productPrice">Price (₱)</label>
-        <input
-                type="number"
-                id="productPrice"
-                min="0.01"
-                step="0.01"
-                required
-                style="width:100%; padding:10px; margin:8px 0 15px;">
+            <div class="admin-profile">
+                <span>👤</span>
+                <span>Administrator</span>
+            </div>
+        </header>
 
-        <label for="productStock">Stock</label>
-        <input
-            type="number"
-            id="productStock"
-            min="0"
-            required
-            style="width:100%; padding:10px; margin:8px 0 15px;">
+        <section class="toolbar-card" aria-label="Product Filters and Actions">
+            <div class="filter-group">
+                <div class="field-box">
+                    <label for="productSearch">Search Products</label>
+                    <input type="search" id="productSearch" placeholder="Search products..." />
+                </div>
 
-        <label for="productImage">Product Image</label>
-        <input
-            type="file"
-            id="productImage"
-            accept="image/*"
-            style="width:100%; padding:10px; margin:8px 0 15px;">
-        <img
-            id="imagePreview"
-            src=""
-            alt="Product Image Preview"
-            style="display:none; width:120px; height:120px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+                <div class="field-box">
+                    <label for="categoryFilter">Filter by Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Classic Boxes">Classic Boxes</option>
+                        <option value="21-Piece Box">21-Piece Box</option>
+                    </select>
+                </div>
+            </div>
 
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button type="submit" class="btn-primary">Save Product</button>
-            <button type="button" id="cancelBtn">Cancel</button>
-        </div>
-    </form>
+            <button class="btn-primary" id="addProductBtn" type="button">+ Add Product</button>
+        </section>
+
+        <section class="panel-card" aria-label="Products Table">
+            <h2>Products List</h2>
+            <p>View and update active doughnut boxes and stock availability.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="adminProductTable">
+                    <tr>
+                        <td colspan="8">No products available</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel-card" aria-label="Flavor Management">
+            <h2>Flavor Management</h2>
+            <p>Manage the available donut flavors for customer orders.</p>
+
+            <div class="flavor-form">
+                <h3>Add New Flavor</h3>
+                <div class="flavor-form-row">
+                    <div class="field-box">
+                        <label for="flavorName">Flavor Name</label>
+                        <input type="text" id="flavorName" placeholder="Enter donut flavor" />
+                    </div>
+                    <button type="button" id="addFlavorBtn" class="btn-primary">Pick your flavor</button>
+                </div>
+            </div>
+
+            <div class="flavor-list">
+                <h3>Available Flavors</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Flavor Id</th>
+                            <th>Flavor Name</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="adminFlavorTable">
+                        <tr>
+                            <td colspan="3">No flavors available.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
 </div>
+
+<div id="productModal" class="modal-backdrop">
+    <div class="modal-box">
+        <h2 id="modalTitle">Add Product</h2>
+        <form id="productForm">
+            <input type="hidden" id="productId" />
+
+            <div class="modal-field">
+                <label for="productName">Product Name</label>
+                <input type="text" id="productName" required />
+            </div>
+
+            <div class="modal-field">
+                <label for="productCategory">Category</label>
+                <select id="productCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="21-Piece Box">21-Piece Box</option>
+                    <option value="Classic Boxes">Classic Boxes</option>
+                </select>
+            </div>
+
+            <div class="modal-field">
+                <label for="productPrice">Price (₱)</label>
+                <input type="number" id="productPrice" min="0.01" step="0.01" required />
+            </div>
+
+            <div class="modal-field">
+                <label for="productStock">Stock</label>
+                <input type="number" id="productStock" min="0" required />
+            </div>
+
+            <div class="modal-field">
+                <label for="productImage">Product Image</label>
+                <input type="file" id="productImage" accept="image/*" />
+            </div>
+
+            <img
+                    id="imagePreview"
+                    src=""
+                    alt="Product Image Preview"
+                    style="display:none; width:120px; height:120px; object-fit:cover; border-radius:10px; margin-bottom:12px;"
+            />
+
+            <div class="modal-actions">
+                <button type="button" id="cancelBtn" class="btn-ghost">Cancel</button>
+                <button type="submit" class="btn-primary">Save Product</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script src="/js/admin.js"></script>
-
 </body>
 </html>
