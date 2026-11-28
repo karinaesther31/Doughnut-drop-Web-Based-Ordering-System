@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doughnut Drop - Menu</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="customer-header">
+    <a href="/customer/menu.html" class="customer-brand">
+        🍩 Doughnut Drop
+    </a>
+
+    <nav>
+        <a href="/customer/menu.html">Menu</a>
+        <a href="/customer/my-orders.html">My Orders</a>
+        <a href="/customer/profile.html">Profile</a>
+        <a href="/auth/login.html">Logout</a>
+    </nav>
+</header>
+
+<main class="customer-main">
+    <section class="menu-heading">
+        <h1>Our Doughnut Box</h1>
+        <p>Choose your favorite flavors and create your own box!</p>
+    </section>
+
+        <section class="customer-products">
+
+            <div class="product-card">
+                <div class="product-image">
+                    🍩
+                </div>
+
+                <div class="product-info">
+                    <h2>21-Piece Doughnut Box</h2>
+                    <p>Create your own box with your favorite doughnut flavors!</p>
+
+                    <h3>Choose your flavors</h3>
+                    <p>Available flavors:</p>
+
+                    <div class="flavor-selection">
+
+                        <div class="flavor-option">
+                            <label for="chocolate">Chocolate</label>
+                            <input type="number" id="chocolate" min="0" max="21" value="0">
+                        </div>
+
+                        <div class="flavor-option">
+                            <label for="whiteChocolate">White Chocolate</label>
+                            <input type="number" id="whiteChocolate" min="0" max="21" value="0">
+                        </div>
+
+                        <div class="flavor-option">
+                            <label for="ube">Ube</label>
+                            <input type="number" id="ube" min="0" max="21" value="0">
+                        </div>
+
+                        <div class="flavor-option">
+                            <label for="strawberry">Strawberry</label>
+                            <input type="number" id="strawberry" min="0" max="21" value="0">
+                        </div>
+
+                        <div class="flavor-option">
+                            <label for="matcha">Matcha</label>
+                            <input type="number" id="matcha" min="0" max="21" value="0">
+                        </div>
+
+                    </div>
+
+                    <p><strong>Total: 21 pieces</strong></p>
+                </div>
+                <div class="selection-summary">
+                    <div>
+                        <span>Selected Pieces</span>
+                        <h3><span id="totalPieces">0</span> / 21</h3>
+                    </div>
+
+                    <p id="selectionMessage">
+                        Choose your 21 favorite doughnuts!
+                    </p>
+                </div>
+
+                <button type="button" id="addToCartBtn" class="btn-primary" disabled>
+                    Continue to Checkout
+                </button>
+            </div>
+
+        </section>
+
+</main>
+
+<script src="/js/customer.js"></script>
+
+</body>
+</html>

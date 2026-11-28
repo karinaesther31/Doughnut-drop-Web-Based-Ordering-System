@@ -18,7 +18,6 @@ const cancelBtn = document.getElementById("cancelBtn");
 const productForm = document.getElementById("productForm");
 const modalTitle = document.getElementById("modalTitle");
 const productTable = document.getElementById("adminProductTable");
-const orderTable = document.getElementById("adminOrderTable");
 const flavorName = document.getElementById("flavorName");
 const addFlavorBtn = document.getElementById("addFlavorBtn");
 const flavorTable = document.getElementById("adminFlavorTable");
@@ -240,20 +239,10 @@ if(categoryFilter && productTable) {
                     alert("Please enter your flavor.");
                     return;
                 }
-                const row = document.createElement("tr");
-                const flavorId = "F" +(flavorTable.rows.length +1);
-
-                row.innerHTML=`
-                <td>${flavorId}</td>
-                <td>${name}</td>
-                <td>
-                <button type="button" class="delete-flavor">Delete</button>
-                </td>
-
-                `;
-                flavorTable.appendChild(row);
+                flavors.push(name);
 
                 flavorName.value="";
+                displayFlavors();
             });
         }
 
@@ -261,13 +250,41 @@ if(categoryFilter && productTable) {
             flavorTable.addEventListener("click", function(event) {
                 if (event.target.classList.contains("delete-flavor")) {
                     const row = event.target.closest("tr");
+                    const index = Array.from(flavorTable.rows).indexOf(row);
 
                     if (confirm("Are you sure you want to remove this flavor?")) {
-                        row.remove();
+                        flavors.splice(index, 1);
+                        displayFlavors();
                     }
                 }
             });
         }
+
+        let flavors = [
+            "Chocolate",
+            "White Chocolate",
+            "Ube",
+            "Strawberry",
+            "Matcha"
+        ];
+
+        function displayFlavors() {
+            flavorTable.innerHTML="";
+
+            flavors.forEach((flavor, index) =>{
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                <td>${index +1}</td>
+                <td>${flavor}</td>
+                <td>
+                <button type="button" class="btn-delete">Delete</button>
+                </td>
+                 `;
+                flavorTable.appendChild(row);
+            });
+        }
+        displayFlavors();
 }
 
 

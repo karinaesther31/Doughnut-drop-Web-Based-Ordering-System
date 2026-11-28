@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doughnut Drop - Checkout</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="customer-header">
+    <a href="/customer/menu.html" class="customer-brand">
+        🍩 Doughnut Drop
+    </a>
+
+    <nav>
+        <a href="/customer/menu.html">Menu</a>
+        <a href="/customer/my-orders.html">My Orders</a>
+        <a href="/customer/profile.html">Profile</a>
+        <a href="/auth/login.html">Logout</a>
+    </nav>
+</header>
+
+<main class="customer-main">
+    <section class="menu-heading">
+        <h1>Checkout</h1>
+        <p>Review your custom doughnut box before placing your order.</p>
+    </section>
+
+    <section class="checkout-card">
+
+        <h2>21-Piece Doughnut Box</h2>
+
+        <div id="checkoutFlavors">
+            <p>No flavor selection found.</p>
+        </div>
+
+        <div class="checkout-total">
+            <span>Total Pieces</span>
+            <strong id="checkoutTotal">0 / 21</strong>
+        </div>
+
+        <div class="checkout-actions">
+            <a href="/customer/menu.html" class="btn-secondary">
+                Back to Menu
+            </a>
+
+            <button type="button" id="placeOrderBtn" class="btn-primary">
+                Place Order
+            </button>
+        </div>
+
+    </section>
+</main>
+
+<script src="/js/customer.js"></script>
+
+</body>
+</html>
