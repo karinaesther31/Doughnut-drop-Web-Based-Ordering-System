@@ -1,4 +1,4 @@
-package finalProject.doughnut_drop.dto; // Package ng DTO classes
+package finalProject.doughnut_drop.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,14 +22,14 @@ public record registerRequestDTO(
 
                                   @NotBlank(message = "Default fulfillment type is required")
                                   @Pattern(
-                                          regexp = "(?i)^(PICK_UP|DELIVERY)$",
+                                          regexp = "(PICK_UP|DELIVERY)",
                                           message = "Default fulfillment type must be PICK_UP or DELIVERY"
                                   )
                                   String defaultFulfillmentType,
 
                                   @NotBlank(message = "Default payment method is required")
                                   @Pattern(
-                                          regexp = "(?i)^(CASH|ONLINE_PAYMENT)$",
+                                          regexp = "(CASH|ONLINE_PAYMENT)",
                                           message = "Default payment method must be CASH or ONLINE_PAYMENT"
                                   )
                                   String defaultPaymentMethod

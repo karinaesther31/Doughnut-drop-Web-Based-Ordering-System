@@ -50,11 +50,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-
+                        // Static UI files & login page
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/auth/**",
+                                "/auth/login.html",
                                 "/*.html",
                                 "/css/**",
                                 "/js/**",
@@ -63,18 +64,19 @@ public class SecurityConfig {
                                 "/favicon.ico"
                         ).permitAll()
 
-
+                        // H2 Console & Auth endpoints
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
 
-
+                        // Public catalog, cart, at orders
                         .requestMatchers(HttpMethod.GET, "/api/doughnuts/**").permitAll()
                         .requestMatchers("/api/cart/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
 
-                        .requestMatchers("/", "/auth/**", "/css/**", "/js/**", "/images/**", "/api/auth/**").permitAll()
+                        // Protected restock para sa ADMIN at STAFF lang
+                        .requestMatchers(HttpMethod.POST, "/api/doughnuts/*/restock").hasAnyRole("ADMIN", "STAFF")
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
 
