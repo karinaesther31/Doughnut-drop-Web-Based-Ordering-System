@@ -14,11 +14,8 @@ import java.util.List;
 
 @Configuration
 public class dataSeeder {
-    private record staffAdmin(
-            String username,
-            String password
 
-    ) {
+    private record StaffAdmin(String username, String password, String role) {
     }
 
     @Bean
@@ -39,12 +36,12 @@ public class dataSeeder {
                 ));
             }
 
-            List<staffAdmin> privilegeAccount = List.of(
-                    new staffAdmin("Admin01", "admin1231"),
-                    new staffAdmin("Staff01", "Staff1231")
+            List<StaffAdmin> privilegeAccounts = List.of(
+                    new StaffAdmin("Admin01", "admin1231", "ROLE_ADMIN"),
+                    new StaffAdmin("Staff01", "Staff1231", "ROLE_ADMIN")
             );
 
-            for (staffAdmin seed : privilegeAccount) {
+            for (StaffAdmin seed : privilegeAccounts) {
                 boolean exists = userRepository.findAll().stream()
                         .anyMatch(u -> seed.username().equalsIgnoreCase(u.getUsername()));
 
@@ -57,7 +54,7 @@ public class dataSeeder {
                     account.setDefaultDeliveryAddress("Doughnut Drop Store");
                     account.setDefaultFulfillmentType("PICK_UP");
                     account.setDefaultPaymentMethod("CASH");
-                    account.setRole(seed.username().toUpperCase().startsWith("ADMIN") ? "ROLE_ADMIN" : "ROLE_STAFF");
+                    account.setRole(seed.role());
                     account.setPassword(passwordEncoder.encode(seed.password()));
                     userRepository.save(account);
                 }
