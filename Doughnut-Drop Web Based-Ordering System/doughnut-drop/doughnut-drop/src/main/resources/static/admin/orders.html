@@ -2,9 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doughnut Drop-Orders</title>
 </head>
 <body>
+<header class="topbar">
+    <a class="brand-link" href="/admin/dashboard.html">🍩DOUGHNUT DROP-Admin</a>
 
+    <nav class="nav-links">
+        <a href="/admin/dashboard.html">Dashboard</a>
+        <a href="/admin/products.html">Products</a>
+        <a class="active" href="/admin/orders.html">Orders</a>
+        <a href="/auth/login.html">Logout</a>
+    </nav>
+</header>
+
+<main class="main-content">
+    <section class="page-header">
+        <div>
+            <h1>Orders Management</h1>
+            <p>View and manage customer orders.</p>
+        </div>
+    </section>
+    <section class="stats-container">
+        <div class="stat-card">
+            <h3>Total Orders</h3>
+            <p id="totalOrders">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Pending Orders</h3>
+            <p id="pendingOrders">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Completed Orders</h3>
+            <p id="completedOrders">0</p>
+        </div>
+    </section>
+
+    <section class="table-container">
+        <h2>Customer Orders</h2>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+        </table>
+    </section>
+</main>
+<script src="/js/admin.js"></script>
 </body>
 </html>
