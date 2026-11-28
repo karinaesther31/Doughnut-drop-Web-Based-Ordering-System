@@ -7,10 +7,7 @@ import java.util.List;
 
 public interface customerOrderRepository extends JpaRepository<customerOrder, Long> {
 
-    List<customerOrder> findByCustomerIdAndActiveTrue(Long customerId);
     List<customerOrder> findByCustomerId(Long customerId);
+
     List<customerOrder> findByCustomerIdOrderByCreatedAtDesc(Long customerId);
 }
-
-
-

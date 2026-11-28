@@ -167,6 +167,9 @@ public class orderService {
     }
 
     private userAccount findCustomer(Long customerId) {
+        if (customerId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Customer ID is required");
+        }
         userAccount account = userRepository.findById(customerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found: " + customerId));
         if (!"ROLE_USER".equalsIgnoreCase(account.getRole())) {
@@ -176,14 +179,23 @@ public class orderService {
     }
 
     private Map<Long, Integer> mergeCartItems(List<OrderLineRequestDTO> items) {
+        if (items == null || items.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order items must not be empty");
+        }
         Map<Long, Integer> merged = new LinkedHashMap<>();
         for (OrderLineRequestDTO line : items) {
+            if (line == null || line.doughnutId() == null || line.quantity() == null || line.quantity() <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Each order item must have a valid doughnutId and positive quantity");
+            }
             merged.merge(line.doughnutId(), line.quantity(), Integer::sum);
         }
         return merged;
     }
 
     private String normalizeFulfillment(String rawValue) {
+        if (rawValue == null || rawValue.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fulfillment type is required");
+        }
         String clean = rawValue.trim().toUpperCase();
         if (!clean.equals("PICK_UP") && !clean.equals("DELIVERY")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fulfillment type must be PICK_UP or DELIVERY");
@@ -192,6 +204,9 @@ public class orderService {
     }
 
     private String normalizePayment(String rawValue) {
+        if (rawValue == null || rawValue.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment method is required");
+        }
         String clean = rawValue.trim().toUpperCase();
         if (!clean.equals("CASH") && !clean.equals("ONLINE_PAYMENT")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment method must be CASH or ONLINE_PAYMENT");

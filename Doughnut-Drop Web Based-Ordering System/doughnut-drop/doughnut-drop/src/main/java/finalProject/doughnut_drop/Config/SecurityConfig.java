@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,32 +29,42 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(userAccountRepository userRepository) {
         return username -> {
             userAccount account = userRepository.findAll().stream()
-                    .filter(u -> username.equalsIgnoreCase(u.getUsername()))
+                    .filter(u -> u.getUsername() != null && username.equalsIgnoreCase(u.getUsername()))
                     .findFirst()
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-            String roleName = account.getRole().startsWith("ROLE_")
-                    ? account.getRole().substring(5)
-                    : account.getRole();
-
-            String encodedPassword = account.getPassword() != null
-                    ? account.getPassword()
-                    : "{noop}";
+            String rawRole = account.getRole() != null ? account.getRole().trim() : "USER";
+            String roleName = rawRole.startsWith("ROLE_") ? rawRole.substring(5) : rawRole;
 
             return User.builder()
                     .username(account.getUsername())
-                    .password(encodedPassword)
+                    .password(resolvePassword(account.getPassword()))
                     .roles(roleName)
                     .build();
         };
     }
 
+    private String resolvePassword(String password) {
+        // Customer accounts may have null passwords; prefix "{noop}" when no BCrypt hash exists
+        if (password == null || password.isBlank()) {
+            return "{noop}";
+        }
+        if (password.startsWith("$2a$")
+                || password.startsWith("$2b$")
+                || password.startsWith("$2y$")
+                || password.startsWith("{")) {
+            return password;
+        }
+        return "{noop}" + password;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/index.html", "/auth/**", "/admin/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/doughnuts/**").permitAll()
@@ -60,7 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

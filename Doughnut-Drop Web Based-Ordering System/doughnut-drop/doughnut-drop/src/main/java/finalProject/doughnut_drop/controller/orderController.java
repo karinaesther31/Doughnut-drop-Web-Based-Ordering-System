@@ -15,11 +15,9 @@ import java.util.List;
 public class orderController {
 
     private final orderService service;
-
     public orderController(orderService service) {
         this.service = service;
     }
-
     @PostMapping("/preview")
     public orderResponseDTO previewOrder(@Valid @RequestBody orderRequestDTO req) {
         return service.previewOrder(req);
