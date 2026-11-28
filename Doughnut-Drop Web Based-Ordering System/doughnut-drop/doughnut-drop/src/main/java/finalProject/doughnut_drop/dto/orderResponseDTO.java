@@ -6,7 +6,13 @@ import java.util.List;
 
 public record orderResponseDTO (
         Long orderId,
+        Long customerId,
         String customerName,
+        String mobileNumber,
+        String fulfillmentType,
+        String paymentMethod,
+        String deliveryAddress,
+        String status,
         BigDecimal totalAmount,
         LocalDateTime createdAt,
         List<orderItemsResponseDTO> items
