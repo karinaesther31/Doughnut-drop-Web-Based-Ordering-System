@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 public class dataSeeder {
 
-    private record StaffAdmin(String username, String password) {
+    private record StaffAdmin(String username, String password, String role) {
     }
 
     @Bean
@@ -37,8 +37,8 @@ public class dataSeeder {
             }
 
             List<StaffAdmin> privilegeAccounts = List.of(
-                    new StaffAdmin("Admin01", "admin1231"),
-                    new StaffAdmin("Staff01", "Staff1231")
+                    new StaffAdmin("Admin01", "admin1231", "ROLE_ADMIN"),
+                    new StaffAdmin("Staff01", "Staff1231", "ROLE_STAFF")
             );
 
             for (StaffAdmin seed : privilegeAccounts) {
@@ -54,7 +54,7 @@ public class dataSeeder {
                     account.setDefaultDeliveryAddress("Doughnut Drop Store");
                     account.setDefaultFulfillmentType("PICK_UP");
                     account.setDefaultPaymentMethod("CASH");
-
+                    account.setRole(seed.role());
                     account.setPassword(passwordEncoder.encode(seed.password()));
                     userRepository.save(account);
                 }
